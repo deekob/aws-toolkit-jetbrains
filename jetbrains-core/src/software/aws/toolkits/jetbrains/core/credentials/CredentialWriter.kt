@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.ex.MessagesEx
 import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.annotations.TestOnly
 import software.amazon.awssdk.profiles.ProfileFileLocation
@@ -63,11 +64,14 @@ class CreateOrUpdateCredentialProfilesAction @TestOnly constructor(
         }
     }
 
-    private fun confirm(project: Project, file: File): Boolean = Messages.showOkCancelDialog(
+    private fun confirm(project: Project, file: File): Boolean = MessagesEx.showOkCancelDialog(
         project,
         message("configure.toolkit.upsert_credentials.confirm_file_create", file),
         message("configure.toolkit.upsert_credentials.confirm_file_create.title"),
-        AllIcons.General.QuestionDialog
+        message("configure.toolkit.upsert_credentials.confirm_file_create.okay"),
+        Messages.CANCEL_BUTTON,
+        AllIcons.General.QuestionDialog,
+        null
     ) == Messages.OK
 }
 

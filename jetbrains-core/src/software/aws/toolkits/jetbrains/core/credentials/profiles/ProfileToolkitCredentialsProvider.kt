@@ -4,7 +4,6 @@
 package software.aws.toolkits.jetbrains.core.credentials.profiles
 
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.text.nullize
 import icons.AwsIcons
@@ -26,6 +25,7 @@ import software.aws.toolkits.core.region.ToolkitRegionProvider
 import software.aws.toolkits.core.utils.getLogger
 import software.aws.toolkits.core.utils.warn
 import software.aws.toolkits.jetbrains.core.credentials.profiles.ProfileToolkitCredentialsProviderFactory.Companion.TYPE
+import software.aws.toolkits.jetbrains.utils.invokeAndWaitIfNeeded
 import software.aws.toolkits.resources.message
 import java.util.function.Supplier
 
@@ -151,7 +151,7 @@ class ProfileToolkitCredentialsProvider(
             }
         }.build()
 
-    private fun getMfaToken(name: String, mfaSerial: String): String = invokeAndWaitIfNeed(ModalityState.any()) {
+    private fun getMfaToken(name: String, mfaSerial: String): String = invokeAndWaitIfNeeded(ModalityState.any()) {
         Messages.showInputDialog(
             message("credentials.profile.mfa.message", mfaSerial),
             message("credentials.profile.mfa.title", name),

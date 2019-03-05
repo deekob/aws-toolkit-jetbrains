@@ -17,9 +17,10 @@ import software.aws.toolkits.jetbrains.core.credentials.ProjectAccountSettingsMa
 import software.aws.toolkits.jetbrains.services.lambda.LambdaHandlerResolver
 import software.aws.toolkits.jetbrains.services.lambda.RuntimeGroup
 import software.aws.toolkits.jetbrains.services.lambda.execution.LambdaRunConfiguration
-import software.aws.toolkits.jetbrains.services.lambda.sam.SamTemplateUtils.functionFromElement
 import software.aws.toolkits.jetbrains.services.lambda.runtimeGroup
+import software.aws.toolkits.jetbrains.services.lambda.sam.SamTemplateUtils.functionFromElement
 
+@Suppress("DEPRECATION") // LazyRunConfigurationProducer not added till 2019.1
 class LocalLambdaRunConfigurationProducer : RunConfigurationProducer<SamRunConfiguration>(getFactory()) {
     // Filter all Lambda run CONFIGURATIONS down to only ones that are Lambda SAM for this run producer
     override fun getConfigurationSettingsList(runManager: RunManager): List<RunnerAndConfigurationSettings> =

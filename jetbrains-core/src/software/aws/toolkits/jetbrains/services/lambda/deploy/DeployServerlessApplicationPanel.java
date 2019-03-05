@@ -3,31 +3,31 @@
 
 package software.aws.toolkits.jetbrains.services.lambda.deploy;
 
+import static software.aws.toolkits.resources.Localization.message;
+
 import com.intellij.execution.util.EnvVariablesTable;
 import com.intellij.execution.util.EnvironmentVariable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.CommonActionsPanel;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.panels.Wrapper;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import software.aws.toolkits.jetbrains.services.cloudformation.Parameter;
-import software.aws.toolkits.jetbrains.ui.ResourceSelector;
-
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static software.aws.toolkits.resources.Localization.message;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import software.aws.toolkits.jetbrains.services.cloudformation.Parameter;
+import software.aws.toolkits.jetbrains.ui.ResourceSelector;
 
 public class DeployServerlessApplicationPanel {
     @NotNull JTextField newStackName;
@@ -82,21 +82,23 @@ public class DeployServerlessApplicationPanel {
     }
 
     private void createUIComponents() {
+        if (!ApplicationManager.getApplication().isHeadlessEnvironment()) {
+            environmentVariablesTable = new EnvVariablesTable();
 
-        environmentVariablesTable = new EnvVariablesTable();
+            final CommonActionsPanel panel = UIUtil.findComponentOfType(environmentVariablesTable.getComponent(),
+                                                                        CommonActionsPanel.class);
+            if (panel != null) {
+                panel.getToolbar().getActions().forEach(a -> a.getTemplatePresentation().setEnabledAndVisible(false));
+                panel.setVisible(false);
+                panel.setEnabled(false);
+            }
 
-        final CommonActionsPanel panel = UIUtil.findComponentOfType(environmentVariablesTable.getComponent(), CommonActionsPanel.class);
-        if (panel != null) {
-            panel.getToolbar().getActions().forEach(a -> a.getTemplatePresentation().setEnabledAndVisible(false));
-            panel.setVisible(false);
-            panel.setEnabled(false);
+            hideActionButton(ToolbarDecorator.findAddButton(environmentVariablesTable.getComponent()));
+            hideActionButton(ToolbarDecorator.findRemoveButton(environmentVariablesTable.getComponent()));
+            hideActionButton(ToolbarDecorator.findEditButton(environmentVariablesTable.getComponent()));
+
+            stackParameters = new Wrapper(environmentVariablesTable.getComponent());
         }
-
-        hideActionButton(ToolbarDecorator.findAddButton(environmentVariablesTable.getComponent()));
-        hideActionButton(ToolbarDecorator.findRemoveButton(environmentVariablesTable.getComponent()));
-        hideActionButton(ToolbarDecorator.findEditButton(environmentVariablesTable.getComponent()));
-
-        stackParameters = new Wrapper(environmentVariablesTable.getComponent());
     }
 
     private static void hideActionButton(final AnActionButton actionButton) {
